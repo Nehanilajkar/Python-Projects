@@ -1,21 +1,25 @@
+import logo
 alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 play=True
     
+print(logo.art)
 def caesar(text,shift,direction):
     end_text=''
     text_shift=0    
-
+    
     for i in text:
-        if direction=="decode":
-            text_shift=alphabet.index(i)-shift
-            if text_shift<0:
-                text_shift+=26       #access again from z-a and 'z' is at index 25 so 26 is added.
+        if i.isalpha():    
+            if direction=="decode":
+                sub_shift=alphabet.index(i)-shift
+                text_shift=sub_shift%26       #to access alphabets if shift >26
+  
+            else:
+                add_shift=alphabet.index(i)+shift
+                text_shift=add_shift%26
+            letter=alphabet[text_shift]
         else:
-            text_shift=alphabet.index(i)+shift
-            if text_shift>25:
-               text_shift-=26       #access again from a-z and 'a' is at index 0 so 26 is substracted.
-
-        end_text+=alphabet[text_shift]
+            letter=i   
+        end_text+=letter
     print(f"The {direction}d text is {end_text}.")
     
 
@@ -30,6 +34,7 @@ while play:
     else:
         print("Thanks for playing , visit again!")
         play=False
+
 
 
 
