@@ -26,116 +26,53 @@ MENU = {
 }
 print(logo.art)
 
-report={'Water':300,'Milk':200,'Coffee':100,'Money':0}
-espresso_required={'Water':50,'Milk':0,'Coffee':18,'Money':1.50}
-latte_required={'Water':200,'Milk':150,'Coffee':24,'Money':2.50}
-cappuccino_required={'Water':250,'Milk':100,'Coffee':24,'Money':3.00}
+report={'water':300,'milk':200,'coffee':100,'cost':0}
 
 def check_resources(user_choice):
-    flag=0
-    if user_choice=='espresso':
-        if espresso_required['Water']<=report['Water']:
-            flag=0
-            report['Water']-=espresso_required['Water']
+    items=MENU[user_choice]["ingredients"]
+    for item in items:
+        if items[item]<=report[item]:
+            report[item] -= items[item]
         else:
-            flag = 1
-            insufficient_resource='Water'
-            return False,insufficient_resource
-        if espresso_required['Coffee']<=report['Coffee']:
-            flag=0
-            report['Coffee']-=espresso_required['Coffee']
-        else:
-            flag=1
-            insufficient_resource = 'Coffee'
-            return False,insufficient_resource
+            print(f"Sorry there is not enough {item}.")
+            return False
+    return True
 
-    elif user_choice=='latte':
-        if latte_required['Water']<=report['Water'] :
-            flag = 0
-            report['Water']-=latte_required['Water']
-        else:
-            flag=1
-            insufficient_resource = 'Water'
-            return False,insufficient_resource
-        if latte_required['Milk']<=report['Milk'] :
-            flag = 0
-            report['Milk']-=latte_required['Milk']
-        else:
-            flag=1
-            insufficient_resource = 'Milk'
-            return False,insufficient_resource
-        if latte_required['Coffee']<=report['Coffee'] :
-            flag = 0
-            report['Coffee']-=latte_required['Coffee']
-        else:
-            flag = 1
-            insufficient_resource = 'Coffee'
-            return False, insufficient_resource
-
-    elif user_choice=='cappuccino':
-        if cappuccino_required['Water']<=report['Water']:
-            flag = 0
-            report['Water']-=cappuccino_required['Water']
-        else:
-            flag=1
-            insufficient_resource = 'Water'
-            return False,insufficient_resource
-        if cappuccino_required['Milk']<=report['Milk'] :
-            flag = 0
-            report['Milk']-=cappuccino_required['Milk']
-        else:
-            flag=1
-            insufficient_resource = 'Milk'
-            return False,insufficient_resource
-        if cappuccino_required['Coffee']<=report['Coffee']:
-            flag = 0
-            report['Coffee']-=cappuccino_required['Coffee']
-        else:
-            flag = 1
-            insufficient_resource = 'Coffee'
-            return False, insufficient_resource
-    if flag == 0:
-        return True,0
 def check_money(user_choice,money_inserted):
-    if user_choice=='cappuccino' and cappuccino_required['Money'] <=money_inserted:
-        report['Money'] += 1.5
-        change = money_inserted - 1.5
-        return True, round(change,2)
-    elif user_choice=='latte' and latte_required['Money'] <=money_inserted:
-        report['Money']+=2.5
-        change = money_inserted - 2.5
-        return True, round(change,2)
-    elif user_choice=='espresso' and espresso_required['Money'] <=money_inserted:
-        report['Money'] += 3.0
-        change=money_inserted-3.0
-        return True,round(change,2)
+    money=MENU[user_choice]['cost']
+    if money<=money_inserted:
+        report['cost'] += money
+        change=round(money_inserted-money,2)
+        print(f"Here is your change ${change}.")
+        return True
     else:
-        return False,0
+        return False
+
 while True:
     user_choice=input("What would you like? (espresso/latte/cappuccino):").lower()
     if user_choice=='report':
-        print("Water:",report['Water'])
-        print("Milk:", report['Milk'])
-        print("Coffee:", report['Coffee'])
-        print("Money:", report['Money'])
+        print(f"Water: {report['water']}ml")
+        print(f"Milk: {report['milk']}ml")
+        print(f"Coffee: {report['coffee']}g")
+        print(f"Money: ${report['cost']}")
         continue
     if user_choice=='off':
         break
+    if user_choice=='refill':
+        report = {'water': 300, 'milk': 200, 'coffee': 100, 'cost': 0}
+        continue
     required_resources=check_resources(user_choice)
-    if required_resources[0]:
+    if required_resources:
         print("Please insert coins.")
         quaters=int(input("How many quaters?"))
         dimes=int(input("How many dimes?"))
         nickles=int(input("How many nickles?"))
         pinnies=int(input("How many pinnies?"))
-        money_cal=(quaters*25)/100+(dimes*10)/100+(nickles*5)/100+pinnies/100
-        print(money_cal)
+        money_cal=quaters*0.25+dimes*0.10+nickles*0.05+pinnies*0.001
         required_money=check_money(user_choice,money_cal)
-        if required_money[0]:
-            if required_money[1]>0:
-                print(f"Here is your change {required_money[1]}.")
-            print(f"Here is your {user_choice}. Enjoy!")
+        if required_money:
+            print(f"Here is your {user_choice} ☕. Enjoy!")
         else:
+            for item in MENU[user_choice]['ingredients']:
+                    report[item] += MENU[user_choice]['ingredients'][item]
             print("Sorry that's not enough money. Money refunded.")
-    else:
-        print(f"Sorry there is not enough {required_resources[1]}.")
