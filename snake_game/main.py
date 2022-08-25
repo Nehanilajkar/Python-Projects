@@ -35,3 +35,4 @@ while play=='on':
     if snake_obj.snake_head.xcor()>280 or snake_obj.snake_head.xcor() <-280 or snake_obj.snake_head.ycor() > 280 or snake_obj.snake_head.ycor() <-280:
         scoreb.game_over()
         play='off'
+screen.exitonclick()
